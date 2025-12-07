@@ -1,0 +1,291 @@
+/* PreviewPanel.css - Liquid Glass Design */
+
+.preview-panel {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(245, 243, 255, 0.4));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), transparent, rgba(255, 255, 255, 0.1));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.preview-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top left, rgba(243, 232, 255, 0.25), transparent, rgba(219, 234, 254, 0.25));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.preview-panel-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.preview-panel-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.preview-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.preview-panel-content::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+/* Show scrollbar on hover */
+.preview-panel:hover .preview-panel-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--gradient-start, rgba(139, 92, 246, 0.5)), var(--gradient-end, rgba(99, 102, 241, 0.5)));
+}
+
+.preview-panel:hover .preview-panel-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--gradient-start, rgba(139, 92, 246, 0.7)), var(--gradient-end, rgba(99, 102, 241, 0.7)));
+}
+
+.preview-panel:hover .preview-panel-content::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.3);
+}
+
+.preview-panel-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.preview-display-area {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.7), rgba(241, 245, 249, 0.6));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 16px;
+  box-shadow: 
+    inset 0 2px 8px rgba(0, 0, 0, 0.06),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.5);
+  border: 2px solid rgba(226, 232, 240, 0.5);
+  min-height: 200px;
+}
+
+.preview-image {
+  border-radius: 12px;
+  transition: opacity 0.2s ease;
+  image-rendering: high-quality;
+}
+
+.preview-image.rendering {
+  opacity: 0.5;
+}
+
+.preview-spinner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.preview-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(226, 232, 240, 0.5), rgba(203, 213, 225, 0.4));
+  border-radius: 12px;
+  border: 2px dashed rgba(148, 163, 184, 0.4);
+}
+
+.preview-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.preview-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview-control-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin-left: 2px;
+}
+
+.preview-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, rgba(226, 232, 240, 0.8), rgba(203, 213, 225, 0.6));
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  box-shadow: 
+    inset 0 1px 3px rgba(0, 0, 0, 0.1),
+    0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.preview-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--thumb-color-start, #8b5cf6), var(--thumb-color-end, #7c3aed));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+}
+
+.preview-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.preview-slider::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+}
+
+.preview-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--thumb-color-start, #8b5cf6), var(--thumb-color-end, #7c3aed));
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  transition: all 0.2s ease;
+}
+
+.preview-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.25),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.preview-slider::-moz-range-thumb:active {
+  transform: scale(0.95);
+}
+
+.preview-download-button {
+  width: 100%;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, var(--gradient-start, #8b5cf6), var(--gradient-end, #6366f1));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 
+    0 8px 20px rgba(0, 0, 0, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.preview-download-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 50%);
+  pointer-events: none;
+}
+
+.preview-download-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 28px rgba(0, 0, 0, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.4),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.preview-download-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.15),
+    inset 0 1px 2px rgba(255, 255, 255, 0.3),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.preview-download-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.7), rgba(100, 116, 139, 0.6));
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+}
+
+@keyframes preview-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.preview-spinner {
+  animation: preview-spin 1s linear infinite;
+}

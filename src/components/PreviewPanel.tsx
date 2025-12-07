@@ -1,6 +1,7 @@
 import React from 'react';
 import { Download, Loader2 } from 'lucide-react';
 import { useCartridgeRenderer } from '../hooks/use-cartridge-renderer';
+import './PreviewPanel.css';
 
 interface PreviewPanelProps {
   systemIcon: string | null;
@@ -23,7 +24,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
   onIconSizeChange,
   onArtworkZoomChange
 }) => {
-  const { imageUrl, downloadImage } = useCartridgeRenderer({
+  const { imageUrl, downloadImage, isRendering } = useCartridgeRenderer({
     systemIcon,
     gradientColors,
     gameImage,
@@ -32,74 +33,114 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
     artworkZoom
   });
 
-  return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-200">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Preview</h2>
-      
-      {/* Preview Display Area */}
-      <div className="flex items-center justify-center mb-6 p-4 bg-gray-50 rounded-xl">
-        {imageUrl ? (
-          <img 
-            src={imageUrl} 
-            alt="Game Cartridge Icon Preview"
-            style={{ 
-              width: iconSize, 
-              height: iconSize,
-              imageRendering: 'high-quality'
-            }}
-            className="rounded-lg"
-          />
-        ) : (
-          <div 
-            style={{ width: iconSize, height: iconSize }}
-            className="flex items-center justify-center bg-gray-200 rounded-lg"
-          >
-            <Loader2 className="animate-spin text-gray-400" size={48} />
-          </div>
-        )}
-      </div>
+  // Generate gradient CSS from the selected system colors
+  const gradientStyle = `linear-gradient(135deg, ${gradientColors[0]}, ${gradientColors[1]})`;
+  
+  // Create CSS variables for dynamic theming
+  const themeStyles = {
+    '--gradient-start': gradientColors[0],
+    '--gradient-end': gradientColors[1],
+    '--gradient': gradientStyle
+  } as React.CSSProperties;
 
-      {/* Controls */}
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Preview Size: {iconSize}px
-          </label>
-          <input
-            type="range"
-            min="200"
-            max="500"
-            value={iconSize}
-            onChange={(e) => onIconSizeChange(Number(e.target.value))}
-            className="w-full accent-purple-600"
-          />
+  return (
+    <div className="preview-panel" style={themeStyles}>
+      <div className="preview-panel-content">
+        <h2 className="preview-panel-title">Preview</h2>
+        
+        {/* Preview Display Area */}
+        <div className="preview-display-area">
+          {imageUrl ? (
+            <>
+              <img 
+                src={imageUrl} 
+                alt="Game Cartridge Icon Preview"
+                style={{ 
+                  width: iconSize, 
+                  height: iconSize
+                }}
+                className={`preview-image ${isRendering ? 'rendering' : ''}`}
+              />
+              {isRendering && (
+                <div className="preview-spinner-overlay">
+                  <Loader2 
+                    className="preview-spinner" 
+                    style={{ color: gradientColors[0] }} 
+                    size={32} 
+                  />
+                </div>
+              )}
+            </>
+          ) : (
+            <div 
+              style={{ width: iconSize, height: iconSize }}
+              className="preview-placeholder"
+            >
+              <Loader2 
+                className="preview-spinner" 
+                style={{ color: gradientColors[0] }} 
+                size={48} 
+              />
+            </div>
+          )}
         </div>
 
-        {gameImage && (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Artwork Zoom: {Math.round(artworkZoom * 100)}%
+        {/* Controls */}
+        <div className="preview-controls">
+          <div className="preview-control-group">
+            <label className="preview-control-label">
+              Preview Size: {iconSize}px
             </label>
             <input
               type="range"
-              min="50"
-              max="200"
-              step="5"
-              value={artworkZoom * 100}
-              onChange={(e) => onArtworkZoomChange(Number(e.target.value) / 100)}
-              className="w-full accent-purple-600"
+              min="200"
+              max="500"
+              value={iconSize}
+              onChange={(e) => onIconSizeChange(Number(e.target.value))}
+              className="preview-slider"
+              style={{
+                background: `linear-gradient(to right, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
+                '--thumb-color-start': gradientColors[0],
+                '--thumb-color-end': gradientColors[1]
+              } as React.CSSProperties}
             />
           </div>
-        )}
-        
-        <button
-          onClick={downloadImage}
-          disabled={!imageUrl}
-          className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Download size={20} />
-          Download Icon (1024x1024)
-        </button>
+
+          {gameImage && (
+            <div className="preview-control-group">
+              <label className="preview-control-label">
+                Artwork Zoom: {Math.round(artworkZoom * 100)}%
+              </label>
+              <input
+                type="range"
+                min="50"
+                max="200"
+                step="5"
+                value={artworkZoom * 100}
+                onChange={(e) => onArtworkZoomChange(Number(e.target.value) / 100)}
+                className="preview-slider"
+                style={{
+                  background: `linear-gradient(to right, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
+                  '--thumb-color-start': gradientColors[0],
+                  '--thumb-color-end': gradientColors[1]
+                } as React.CSSProperties}
+              />
+            </div>
+          )}
+          
+          <button
+            onClick={downloadImage}
+            disabled={!imageUrl}
+            className="preview-download-button"
+            style={{
+              background: !imageUrl ? '#9ca3af' : gradientStyle,
+              opacity: !imageUrl ? 0.5 : 1
+            }}
+          >
+            <Download size={20} />
+            Download Icon (1024x1024)
+          </button>
+        </div>
       </div>
     </div>
   );

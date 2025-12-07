@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Upload } from 'lucide-react';
+import './ImageUpload.css';
 
 interface ImageUploadProps {
   gameImage: string | null;
@@ -20,19 +21,32 @@ const ImageUpload: React.FC<ImageUploadProps> = ({ gameImage, onImageUpload, onI
   };
 
   return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">Game Artwork</label>
-      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+    <div className="image-upload-container">
+      <label className="image-upload-label">Game Artwork</label>
+      <input 
+        ref={fileInputRef} 
+        type="file" 
+        accept="image/*" 
+        onChange={handleFileChange} 
+        style={{ display: 'none' }}
+      />
       <button
         onClick={() => fileInputRef.current?.click()}
-        className="w-full bg-white text-gray-700 border-2 border-dashed border-gray-300 rounded-lg px-4 py-8 hover:bg-gray-50 hover:border-purple-400 transition-all flex flex-col items-center justify-center gap-2 shadow-sm"
+        className="image-upload-button"
+        type="button"
       >
-        <Upload size={32} className="text-gray-400" />
-        <span className="font-medium">{gameImage ? 'Change Image' : 'Upload Game Artwork'}</span>
-        <span className="text-xs text-gray-500">PNG, JPG, or GIF</span>
+        <Upload className="image-upload-icon" />
+        <span className="image-upload-text">
+          {gameImage ? 'Change Image' : 'Upload Game Artwork'}
+        </span>
+        <span className="image-upload-hint">PNG or JPG</span>
       </button>
       {gameImage && (
-        <button onClick={onImageRemove} className="w-full mt-2 text-red-500 hover:text-red-600 text-sm font-medium">
+        <button 
+          onClick={onImageRemove} 
+          className="image-remove-button"
+          type="button"
+        >
           Remove Image
         </button>
       )}

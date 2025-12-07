@@ -1,0 +1,197 @@
+/* GradientControls.css - Liquid Glass Design */
+
+.gradient-controls {
+  padding: 4px;
+}
+
+.gradient-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.gradient-icon-container {
+  padding: 8px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(245, 247, 250, 0.5));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+.gradient-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0;
+}
+
+.gradient-color-section {
+  margin-bottom: 16px;
+}
+
+.gradient-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 8px;
+  margin-left: 2px;
+}
+
+.gradient-input-row {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.gradient-color-picker-wrapper {
+  position: relative;
+}
+
+.gradient-color-picker {
+  width: 68px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(245, 247, 250, 0.4));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 
+    0 0 0 2px rgba(203, 213, 225, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+  overflow: hidden;
+  position: relative;
+}
+
+.gradient-color-picker::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gradient-color-picker:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 0 0 2px rgba(139, 92, 246, 0.4),
+    0 6px 16px rgba(0, 0, 0, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-color-picker:active {
+  transform: translateY(0);
+}
+
+.gradient-color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.gradient-color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 8px;
+}
+
+.gradient-color-picker::-moz-color-swatch {
+  border: none;
+  border-radius: 8px;
+}
+
+.gradient-hex-input {
+  flex: 1;
+  height: 44px;
+  padding: 0 14px;
+  background: linear-gradient(135deg, rgba(241, 245, 249, 0.95), rgba(226, 232, 240, 0.9));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(203, 213, 225, 0.5);
+  border-radius: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #000000;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-hex-input::placeholder {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.gradient-hex-input:hover {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 1), rgba(241, 245, 249, 0.95));
+  border-color: rgba(148, 163, 184, 0.6);
+  box-shadow: 
+    0 6px 14px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-hex-input:focus {
+  outline: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
+  border-color: rgba(139, 92, 246, 0.6);
+  color: #000000;
+  box-shadow: 
+    0 0 0 3px rgba(139, 92, 246, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-hex-input::selection {
+  background: rgba(139, 92, 246, 0.25);
+  color: #000000;
+}
+
+.gradient-preview-section {
+  padding-top: 8px;
+}
+
+.gradient-preview {
+  height: 56px;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 0 0 2px rgba(203, 213, 225, 0.5),
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 2px 4px rgba(0, 0, 0, 0.08),
+    inset 0 -1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.gradient-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%, rgba(0, 0, 0, 0.05) 100%);
+  pointer-events: none;
+}
+
+.gradient-preview::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), transparent);
+  pointer-events: none;
+}

@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import DotGridBackground from '../components/DotGridBackground';
 import PreviewPanel from '../components/PreviewPanel';
-import PresetSelector from '../components/PresetSelector';
-import IconInput from '../components/IconInput';
-import GradientControls from '../components/GradientControls';
-import ImageUpload from '../components/ImageUpload';
+import ControlsPanel from '../components/ControlsPanel';
 import { SystemPreset } from '../types';
 import { loadSystemPresets } from '../services/presetService';
 import { exportIconToCanvas } from '../utils/ExportIcon';
 
-const IconMaker = () => {
+const IconMaker: React.FC = () => {
   const [presets, setPresets] = useState<SystemPreset[]>([]);
   const [presetsLoading, setPresetsLoading] = useState(true);
   const [selectedPresetKey, setSelectedPresetKey] = useState<string>('custom');
@@ -20,14 +17,17 @@ const IconMaker = () => {
   const [gameImage, setGameImage] = useState<string | null>(null);
   const [iconSize, setIconSize] = useState<number>(300);
   const [artworkZoom, setArtworkZoom] = useState<number>(1.0);
+  const [iconZoom, setIconZoom] = useState<number>(1.0);
 
   useEffect(() => {
     loadSystemPresets().then(loadedPresets => {
       setPresets(loadedPresets);
       setPresetsLoading(false);
-      if (loadedPresets.length > 0) {
-        const firstPreset = loadedPresets[0];
-        handlePresetChange(firstPreset);
+      
+      // Find and select the Custom preset by default
+      const customPreset = loadedPresets.find(p => p.key === 'custom');
+      if (customPreset) {
+        setSelectedPresetKey('custom');
       }
     });
   }, []);
@@ -58,13 +58,26 @@ const IconMaker = () => {
   };
 
   const handleIconChange = (icon: string) => {
+    console.log('Icon changed to text:', icon);
     setCustomIcon(icon);
     setIsImageIcon(false);
+    // Switch to custom preset when manually changing icon
+    setSelectedPresetKey('custom');
   };
 
   const handleImageIconUpload = (imagePath: string) => {
+    console.log('Icon changed to image:', imagePath);
     setCustomIcon(imagePath);
     setIsImageIcon(true);
+    // Switch to custom preset when uploading icon
+    setSelectedPresetKey('custom');
+  };
+
+  const handleClearImageIcon = () => {
+    console.log('Clearing image icon, switching to emoji');
+    setCustomIcon('🎮');
+    setIsImageIcon(false);
+    setSelectedPresetKey('custom');
   };
 
   const handleDownload = () => {
@@ -74,51 +87,61 @@ const IconMaker = () => {
   return (
     <>
       <DotGridBackground />
-      <div className="min-h-screen p-8 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-gray-800 mb-3">Game Cartridge Icon Maker</h1>
-            <p className="text-gray-600 text-lg">Create custom game cartridge icons with your own images and gradients</p>
-          </div>
+      <div className="min-h-screen p-4 sm:p-6 lg:p-8 relative">
+        <div className="max-w-7xl mx-auto h-full">
+          <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 h-full items-start lg:h-[calc(100vh-4rem)]">
+            {/* Left Column - Title + Preview Panel */}
+            <div className="flex flex-col gap-4 sm:gap-6 lg:h-full">
+              {/* Title Header */}
+              <div className="relative bg-gradient-to-r from-white/50 to-purple-50/40 backdrop-blur-16 rounded-[20px] p-6 shadow-[0_20px_40px_rgba(0,0,0,0.1),inset_0_2px_4px_rgba(255,255,255,0.8),inset_0_-2px_4px_rgba(0,0,0,0.05)] border-2 border-white/30 overflow-hidden flex-shrink-0">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-white/10 pointer-events-none z-0"></div>
+                <div className="absolute inset-0 bg-gradient-to-tl from-blue-100/25 via-transparent to-purple-100/25 pointer-events-none z-0"></div>
+                <div className="relative z-10">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-1 tracking-tight">
+                    iiSU Game Icon Maker
+                  </h1>
+                  <p className="text-gray-600 text-sm sm:text-base">
+                    Create custom game icons with your own images
+                  </p>
+                </div>
+              </div>
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Preview Panel - Now using the component */}
-            <PreviewPanel
-              systemIcon={customIcon}
-              gradientColors={[gradientStart, gradientEnd]}
-              gameImage={gameImage}
-              iconSize={iconSize}
-              isImageIcon={isImageIcon}
-              artworkZoom={artworkZoom}
-              onIconSizeChange={setIconSize}
-              onArtworkZoomChange={setArtworkZoom}
-            />
+              {/* Preview Panel */}
+              <div className="lg:flex-1 lg:overflow-y-auto rounded-[20px]">
+                <PreviewPanel
+                  systemIcon={customIcon}
+                  gradientColors={[gradientStart, gradientEnd]}
+                  gameImage={gameImage}
+                  iconSize={iconSize}
+                  isImageIcon={isImageIcon}
+                  artworkZoom={artworkZoom}
+                  iconZoom={iconZoom}
+                  onIconSizeChange={setIconSize}
+                  onArtworkZoomChange={setArtworkZoom}
+                  onIconZoomChange={setIconZoom}
+                />
+              </div>
+            </div>
 
             {/* Controls Panel */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-200 space-y-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-6">Customize</h2>
-              <PresetSelector 
-                presets={presets} 
-                selectedPresetKey={selectedPresetKey} 
-                onPresetChange={handlePresetChange} 
-                loading={presetsLoading} 
-              />
-              <IconInput 
-                value={customIcon} 
-                onChange={handleIconChange} 
-                isImageIcon={isImageIcon} 
-                onImageIconUpload={handleImageIconUpload} 
-              />
-              <GradientControls 
-                gradientStart={gradientStart} 
-                gradientEnd={gradientEnd} 
-                onGradientStartChange={setGradientStart} 
-                onGradientEndChange={setGradientEnd} 
-              />
-              <ImageUpload 
-                gameImage={gameImage} 
-                onImageUpload={setGameImage} 
-                onImageRemove={() => setGameImage(null)} 
+            <div className="lg:h-full lg:overflow-y-auto rounded-[20px]">
+              <ControlsPanel
+                presets={presets}
+                selectedPresetKey={selectedPresetKey}
+                customIcon={customIcon}
+                gradientStart={gradientStart}
+                gradientEnd={gradientEnd}
+                gameImage={gameImage}
+                isImageIcon={isImageIcon}
+                presetsLoading={presetsLoading}
+                onPresetChange={handlePresetChange}
+                onIconChange={handleIconChange}
+                onImageIconUpload={handleImageIconUpload}
+                onClearImageIcon={handleClearImageIcon}
+                onGradientStartChange={setGradientStart}
+                onGradientEndChange={setGradientEnd}
+                onImageUpload={setGameImage}
+                onImageRemove={() => setGameImage(null)}
               />
             </div>
           </div>

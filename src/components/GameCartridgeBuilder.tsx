@@ -67,26 +67,18 @@ const GameCartridgeBuilder: React.FC<GameCartridgeBuilderProps> = ({
 
       {/* Inner content background */}
       <div 
-        className="absolute"
+        className="absolute flex items-center justify-center"
         style={{
           top: borderThickness * scale,
           left: borderThickness * scale,
           width: innerSize,
           height: innerSize,
           borderRadius: innerRadius * scale,
-          backgroundColor: '#1f2937',
+          backgroundColor: '#ffffff',
           overflow: 'hidden'
         }}
       >
-        {/* Game artwork or placeholder */}
-        {gameImage && !imageError ? (
-          <img 
-            src={gameImage} 
-            alt="Game art" 
-            className="w-full h-full object-cover"
-            onError={() => setImageError(true)}
-          />
-        ) : (
+
           <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex flex-col items-center justify-center gap-4 text-gray-500">
             <svg 
               width={size * 0.25} 

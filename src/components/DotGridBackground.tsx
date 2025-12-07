@@ -27,7 +27,7 @@ const DotGridBackground = () => {
       const { width, height } = canvas;
       const targetDots = 128;
       const spacing = width / targetDots;
-      const dotRadius = spacing * 0.1;
+      const dotRadius = spacing * 0.2;
       const offset = spacing * 0.5;
 
       // Create vertical gradient from white to gray

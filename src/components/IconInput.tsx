@@ -1,18 +1,21 @@
 import React, { useRef } from 'react';
-import { Upload } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
+import './IconInput.css';
 
 interface IconInputProps {
   value: string;
   onChange: (value: string) => void;
   isImageIcon: boolean;
   onImageIconUpload: (imagePath: string) => void;
+  onClearImageIcon: () => void;
 }
 
 const IconInput: React.FC<IconInputProps> = ({ 
   value, 
   onChange, 
   isImageIcon,
-  onImageIconUpload 
+  onImageIconUpload,
+  onClearImageIcon
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -25,46 +28,97 @@ const IconInput: React.FC<IconInputProps> = ({
       };
       reader.readAsDataURL(file);
     }
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleClearClick = () => {
+    onClearImageIcon();
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
-    <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
+    <div className="icon-input-container">
+      <label className="icon-input-main-label">
         System Icon
       </label>
       
-      <div className="space-y-3">
+      <div className="icon-input-sections">
         {/* Emoji/Text input */}
-        <div>
-          <label className="block text-xs text-gray-600 mb-1">Emoji or Text</label>
+        <div className="icon-input-section">
+          <label className="icon-input-label">Emoji or Text</label>
           <input
             type="text"
             value={isImageIcon ? '' : value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="🎮"
+            placeholder="..."
             maxLength={2}
             disabled={isImageIcon}
-            className="w-full bg-white text-gray-900 border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-transparent text-2xl text-center shadow-sm disabled:bg-gray-100 disabled:text-gray-400"
+            className="icon-emoji-input"
+            key={isImageIcon ? 'disabled' : 'enabled'}
           />
         </div>
 
-        {/* Image upload */}
-        <div>
-          <label className="block text-xs text-gray-600 mb-1">Or Upload Icon</label>
+        {/* Image upload or clear */}
+        <div className="icon-input-section">
+          <label className="icon-input-label">
+            {isImageIcon ? 'Icon Image' : 'Or Upload Icon'}
+          </label>
+          
+          {isImageIcon ? (
+            <div>
+              {/* Preview of current image icon */}
+              <div className="icon-preview-container">
+                <img 
+                  src={value} 
+                  alt="Icon preview" 
+                  className="icon-preview-image"
+                />
+              </div>
+              
+              {/* Buttons */}
+              <div className="icon-button-grid">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="icon-upload-button icon-change-button"
+                  type="button"
+                >
+                  <Upload size={14} />
+                  Change
+                </button>
+                <button
+                  onClick={handleClearClick}
+                  className="icon-upload-button icon-clear-button"
+                  type="button"
+                >
+                  <X size={14} />
+                  Use Emoji
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="icon-upload-button"
+              type="button"
+            >
+              <Upload size={16} />
+              Upload Icon Image
+            </button>
+          )}
+          
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={handleFileChange}
-            className="hidden"
+            style={{ display: 'none' }}
           />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="w-full bg-white text-gray-700 border border-gray-300 rounded-lg px-4 py-3 hover:bg-gray-50 hover:border-purple-400 transition-all flex items-center justify-center gap-2 text-sm"
-          >
-            <Upload size={16} />
-            {isImageIcon ? 'Change Icon Image' : 'Upload Icon Image'}
-          </button>
         </div>
       </div>
     </div>

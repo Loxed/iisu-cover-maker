@@ -4,6 +4,7 @@ import PresetSelector from './PresetSelector';
 import IconInput from './IconInput';
 import GradientControls from './GradientControls';
 import ImageUpload from './ImageUpload';
+import './ControlsPanel.css';
 
 interface ControlsPanelProps {
   presets: SystemPreset[];
@@ -17,6 +18,7 @@ interface ControlsPanelProps {
   onPresetChange: (preset: SystemPreset) => void;
   onIconChange: (icon: string) => void;
   onImageIconUpload: (imagePath: string) => void;
+  onClearImageIcon: () => void;
   onGradientStartChange: (color: string) => void;
   onGradientEndChange: (color: string) => void;
   onImageUpload: (image: string) => void;
@@ -35,41 +37,59 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   onPresetChange,
   onIconChange,
   onImageIconUpload,
+  onClearImageIcon,
   onGradientStartChange,
   onGradientEndChange,
   onImageUpload,
   onImageRemove
 }) => {
+  // Create CSS variables for dynamic theming
+  const themeStyles = {
+    '--gradient-start': gradientStart,
+    '--gradient-end': gradientEnd
+  } as React.CSSProperties;
+
   return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-200 space-y-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Customize</h2>
+    <div className="controls-panel" style={themeStyles}>
+      <div className="controls-panel-content">
+        <h2 className="controls-panel-title">Customize</h2>
 
-      <PresetSelector 
-        presets={presets}
-        selectedPresetKey={selectedPresetKey}
-        onPresetChange={onPresetChange}
-        loading={presetsLoading}
-      />
+        <div className="controls-section">
+          <PresetSelector 
+            presets={presets}
+            selectedPresetKey={selectedPresetKey}
+            onPresetChange={onPresetChange}
+            loading={presetsLoading}
+          />
+        </div>
 
-      <IconInput 
-        value={customIcon}
-        onChange={onIconChange}
-        isImageIcon={isImageIcon}
-        onImageIconUpload={onImageIconUpload}
-      />
+        <div className="controls-section">
+          <IconInput 
+            value={customIcon}
+            onChange={onIconChange}
+            isImageIcon={isImageIcon}
+            onImageIconUpload={onImageIconUpload}
+            onClearImageIcon={onClearImageIcon}
+          />
+        </div>
 
-      <GradientControls
-        gradientStart={gradientStart}
-        gradientEnd={gradientEnd}
-        onGradientStartChange={onGradientStartChange}
-        onGradientEndChange={onGradientEndChange}
-      />
+        <div className="controls-section">
+          <GradientControls
+            gradientStart={gradientStart}
+            gradientEnd={gradientEnd}
+            onGradientStartChange={onGradientStartChange}
+            onGradientEndChange={onGradientEndChange}
+          />
+        </div>
 
-      <ImageUpload
-        gameImage={gameImage}
-        onImageUpload={onImageUpload}
-        onImageRemove={onImageRemove}
-      />
+        <div className="controls-section">
+          <ImageUpload
+            gameImage={gameImage}
+            onImageUpload={onImageUpload}
+            onImageRemove={onImageRemove}
+          />
+        </div>
+      </div>
     </div>
   );
 };

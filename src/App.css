@@ -1,4 +1,30 @@
-#root {
+.liquid-glass-preview::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+  pointer-events: none;
+}
+
+/* Gradient Controls Specific Styles */
+.gradient-controls-container {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(240, 245, 255, 0.4));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-color-input {
+  background: linear-gradient(135deg, rgba(226#root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -39,4 +65,144 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Liquid Glass Effect */
+.liquid-glass {
+  position: relative;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.3), transparent, rgba(255, 255, 255, 0.1));
+  pointer-events: none;
+}
+
+.liquid-glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top left, rgba(219, 234, 254, 0.2), transparent, rgba(243, 232, 255, 0.2));
+  pointer-events: none;
+}
+
+.liquid-glass-content {
+  position: relative;
+  z-index: 10;
+}
+
+/* Liquid Glass Input Fields */
+.liquid-glass-input {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(241, 245, 249, 0.9));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(203, 213, 225, 0.6);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: #000000 !important;
+  font-size: 14px;
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.liquid-glass-input:hover {
+  background: linear-gradient(135deg, rgba(248, 250, 252, 1), rgba(241, 245, 249, 0.95));
+  border-color: rgba(148, 163, 184, 0.7);
+  box-shadow: 
+    0 6px 16px rgba(0, 0, 0, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.liquid-glass-input:focus {
+  outline: none;
+  border-color: rgba(139, 92, 246, 0.7);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
+  color: #000000 !important;
+  box-shadow: 
+    0 0 0 4px rgba(139, 92, 246, 0.15),
+    0 8px 20px rgba(0, 0, 0, 0.12),
+    inset 0 1px 2px rgba(255, 255, 255, 1),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.liquid-glass-input::placeholder {
+  color: #64748b !important;
+  font-weight: 600;
+}
+
+.liquid-glass-input::selection {
+  background: rgba(139, 92, 246, 0.3);
+  color: #000000 !important;
+}
+
+.liquid-glass-color-picker {
+  height: 2.5rem;
+  width: 4rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+}
+
+.liquid-glass-color-picker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.liquid-glass-color-picker::-webkit-color-swatch {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.liquid-glass-color-picker::-moz-color-swatch {
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.liquid-glass-preview {
+  height: 56px;
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 2px rgba(255, 255, 255, 0.6),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.liquid-glass-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, transparent 50%, rgba(0, 0, 0, 0.05) 100%);
+  pointer-events: none;
+}
+
+.liquid-glass-preview::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), transparent);
+  pointer-events: none;
 }

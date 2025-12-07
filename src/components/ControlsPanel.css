@@ -1,0 +1,100 @@
+/* ControlsPanel.css - Liquid Glass Design */
+
+.controls-panel {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.5), rgba(240, 245, 255, 0.4));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    inset 0 2px 4px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.controls-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.4), transparent, rgba(255, 255, 255, 0.1));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.controls-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top left, rgba(219, 234, 254, 0.25), transparent, rgba(243, 232, 255, 0.25));
+  pointer-events: none;
+  z-index: 0;
+}
+
+.controls-panel-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.controls-panel-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.controls-panel-content::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.controls-panel-content::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+/* Show scrollbar on hover */
+.controls-panel:hover .controls-panel-content::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.3);
+}
+
+.controls-panel:hover .controls-panel-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--gradient-start, rgba(139, 92, 246, 0.6)), var(--gradient-end, rgba(99, 102, 241, 0.6)));
+}
+
+.controls-panel:hover .controls-panel-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--gradient-start, rgba(139, 92, 246, 0.85)), var(--gradient-end, rgba(99, 102, 241, 0.85)));
+}
+
+/* Firefox scrollbar */
+.controls-panel-content {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.controls-panel:hover .controls-panel-content {
+  scrollbar-color: var(--gradient-start, rgba(139, 92, 246, 0.6)) rgba(226, 232, 240, 0.3);
+}
+
+.controls-panel-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.controls-section {
+  position: relative;
+  flex-shrink: 0;
+}
