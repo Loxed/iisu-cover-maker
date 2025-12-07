@@ -30,7 +30,11 @@ const DotGridBackground = () => {
       const dotRadius = spacing * 0.1;
       const offset = spacing * 0.5;
 
-      ctx.fillStyle = 'hsl(0, 0%, 92%)';
+      // Create vertical gradient from white to gray
+      const gradient = ctx.createLinearGradient(0, 0, 0, height);
+      gradient.addColorStop(0, '#ffffff');
+      gradient.addColorStop(1, 'hsl(0, 0%, 92%)');
+      ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
 
       for (let x = offset; x < width; x += spacing) {
