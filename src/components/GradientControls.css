@@ -1,197 +1,127 @@
-/* GradientControls.css - Liquid Glass Design */
-
+/* Container */
 .gradient-controls {
-  padding: 4px;
+  padding: 12px;
+  font-family: 'Inter', sans-serif;
+  color: #111; /* black text */
 }
 
-.gradient-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.gradient-icon-container {
-  padding: 8px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(245, 247, 250, 0.5));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.06),
-    inset 0 1px 2px rgba(255, 255, 255, 0.9);
-}
-
+/* Title */
 .gradient-title {
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b;
-  margin: 0;
+  margin-bottom: 12px;
 }
 
-.gradient-color-section {
-  margin-bottom: 16px;
+/* Draggable row wrapper */
+.gradient-color-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.gradient-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: #475569;
-  margin-bottom: 8px;
-  margin-left: 2px;
+.gradient-color-wrapper.dragging {
+  transform: scale(1.03);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
 }
 
-.gradient-input-row {
+/* Inner row with glass effect */
+.gradient-color-inner {
   display: flex;
-  gap: 12px;
-  align-items: stretch;
-}
-
-.gradient-color-picker-wrapper {
+  align-items: center;
+  gap: 8px;
+  padding: 8px 40px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255,255,255,0.6);
   position: relative;
+  will-change: transform;
 }
 
-.gradient-color-picker {
-  width: 68px;
-  height: 44px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(245, 247, 250, 0.4));
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: 
-    0 0 0 2px rgba(203, 213, 225, 0.5),
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    inset 0 1px 2px rgba(255, 255, 255, 0.9),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
-  transition: all 0.25s ease;
-  overflow: hidden;
-  position: relative;
-}
-
-.gradient-color-picker::before {
-  content: '';
+/* Drag handle */
+.gradient-drag-handle {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), transparent 60%);
-  pointer-events: none;
-  z-index: 1;
+  left: 10px;
+  font-weight: bold;
+  cursor: grab;
+  color: #111;
 }
 
-.gradient-color-picker:hover {
-  transform: translateY(-2px);
-  box-shadow: 
-    0 0 0 2px rgba(139, 92, 246, 0.4),
-    0 6px 16px rgba(0, 0, 0, 0.12),
-    inset 0 1px 2px rgba(255, 255, 255, 1),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+/* Inline delete trash icon */
+.gradient-delete-inline {
+  margin-left: auto;
+  opacity: 0;
+  cursor: pointer;
+  color: #ff4d4f;
+  transition: opacity 0.2s, color 0.2s;
 }
 
-.gradient-color-picker:active {
-  transform: translateY(0);
+.gradient-color-inner:hover .gradient-delete-inline {
+  opacity: 1;
 }
 
-.gradient-color-picker::-webkit-color-swatch-wrapper {
-  padding: 0;
+.gradient-delete-inline:hover {
+  color: #ff1a1a;
 }
 
-.gradient-color-picker::-webkit-color-swatch {
+/* Color picker */
+.gradient-color-picker {
+  width: 60px;
+  height: 40px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(6px);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.gradient-color-picker::-moz-color-swatch {
-  border: none;
-  border-radius: 8px;
-}
-
+/* Hex input */
 .gradient-hex-input {
   flex: 1;
-  height: 44px;
-  padding: 0 14px;
-  background: linear-gradient(135deg, rgba(241, 245, 249, 0.95), rgba(226, 232, 240, 0.9));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 2px solid rgba(203, 213, 225, 0.5);
-  border-radius: 10px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 13px;
-  font-weight: 700;
-  color: #000000;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all 0.25s ease;
-  box-shadow: 
-    0 4px 12px rgba(0, 0, 0, 0.06),
-    inset 0 1px 2px rgba(255, 255, 255, 0.8),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.2);
+  padding: 0 10px;
+  font-family: monospace;
+  font-weight: bold;
+  background: rgba(255,255,255,0.5);
+  color: #111;
 }
 
-.gradient-hex-input::placeholder {
-  color: #94a3b8;
+/* Add color button */
+.gradient-add-color {
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.5);
+  backdrop-filter: blur(12px);
+  color: #111;
   font-weight: 600;
+  transition: background 0.2s;
 }
 
-.gradient-hex-input:hover {
-  background: linear-gradient(135deg, rgba(248, 250, 252, 1), rgba(241, 245, 249, 0.95));
-  border-color: rgba(148, 163, 184, 0.6);
-  box-shadow: 
-    0 6px 14px rgba(0, 0, 0, 0.08),
-    inset 0 1px 2px rgba(255, 255, 255, 0.9),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
+.gradient-add-color:hover {
+  background: rgba(255,255,255,0.6);
 }
 
-.gradient-hex-input:focus {
-  outline: none;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(248, 250, 252, 1));
-  border-color: rgba(139, 92, 246, 0.6);
-  color: #000000;
-  box-shadow: 
-    0 0 0 3px rgba(139, 92, 246, 0.15),
-    0 8px 20px rgba(0, 0, 0, 0.1),
-    inset 0 1px 2px rgba(255, 255, 255, 1),
-    inset 0 -1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.gradient-hex-input::selection {
-  background: rgba(139, 92, 246, 0.25);
-  color: #000000;
-}
-
+/* Preview section */
 .gradient-preview-section {
-  padding-top: 8px;
+  margin-top: 16px;
 }
 
 .gradient-preview {
   height: 56px;
-  border-radius: 10px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 
-    0 0 0 2px rgba(203, 213, 225, 0.5),
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    inset 0 2px 4px rgba(0, 0, 0, 0.08),
-    inset 0 -1px 2px rgba(255, 255, 255, 0.3);
-}
-
-.gradient-preview::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%, rgba(0, 0, 0, 0.05) 100%);
-  pointer-events: none;
-}
-
-.gradient-preview::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.25), transparent);
-  pointer-events: none;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.3),
+              0 4px 12px rgba(0,0,0,0.08),
+              inset 0 2px 4px rgba(0,0,0,0.08),
+              inset 0 -1px 2px rgba(255,255,255,0.2);
 }

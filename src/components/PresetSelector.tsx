@@ -33,49 +33,35 @@ const PresetSelector: React.FC<PresetSelectorProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Convert hex to RGB
   const hexToRgb = (hex: string) => {
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-      r: parseInt(result[1], 16),
-      g: parseInt(result[2], 16),
-      b: parseInt(result[3], 16)
-    } : { r: 255, g: 255, b: 255 };
+    return result
+      ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
+      : { r: 255, g: 255, b: 255 };
   };
 
+  // Generate linear-gradient background for any number of colors
   const getItemBackground = (preset: SystemPreset) => {
-    // Safety check - use default colors if gradient is missing
-    if (!preset.gradient || preset.gradient.length < 2) {
+    if (!preset.gradient || preset.gradient.length === 0) {
       return 'linear-gradient(90deg, rgba(200, 200, 200, 0.85), rgba(180, 180, 180, 0.85))';
     }
-    
-    const [startColor, endColor] = preset.gradient;
-    const startRgb = hexToRgb(startColor);
-    const endRgb = hexToRgb(endColor);
-    
-    // 20% white + 80% gradient color
-    const startR = Math.round(255 * 0.2 + startRgb.r * 0.8);
-    const startG = Math.round(255 * 0.2 + startRgb.g * 0.8);
-    const startB = Math.round(255 * 0.2 + startRgb.b * 0.8);
-    
-    const endR = Math.round(255 * 0.2 + endRgb.r * 0.8);
-    const endG = Math.round(255 * 0.2 + endRgb.g * 0.8);
-    const endB = Math.round(255 * 0.2 + endRgb.b * 0.8);
-    
-    return `linear-gradient(90deg, rgba(${startR}, ${startG}, ${startB}, 0.85), rgba(${endR}, ${endG}, ${endB}, 0.85))`;
+
+    const colorsRgba = preset.gradient.map((hex) => {
+      const rgb = hexToRgb(hex);
+      const r = Math.round(255 * 0.2 + rgb.r * 0.8);
+      const g = Math.round(255 * 0.2 + rgb.g * 0.8);
+      const b = Math.round(255 * 0.2 + rgb.b * 0.8);
+      return `rgba(${r}, ${g}, ${b}, 0.85)`;
+    });
+
+    return `linear-gradient(90deg, ${colorsRgba.join(', ')})`;
   };
 
   const renderIcon = (preset: SystemPreset) => {
-    // Show emoji for custom preset
-    if (preset.key === 'custom') {
-      return (
-        <span style={{ fontSize: '20px' }}>🎮</span>
-      );
-    }
-    
-    if (!preset.iconPath) {
-      return null;
-    }
-    
+    if (preset.key === 'custom') return <span style={{ fontSize: '20px' }}>🎮</span>;
+    if (!preset.iconPath) return null;
+
     return (
       <img 
         src={preset.iconPath} 
@@ -117,7 +103,7 @@ const PresetSelector: React.FC<PresetSelectorProps> = ({
           
           {isOpen && (
             <div className="preset-dropdown">
-              {presets.map((preset, index) => (
+              {presets.map((preset) => (
                 <div
                   key={preset.key}
                   className={`preset-dropdown-option ${preset.key === selectedPresetKey ? 'selected' : ''}`}

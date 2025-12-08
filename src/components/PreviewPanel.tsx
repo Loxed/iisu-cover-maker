@@ -5,7 +5,7 @@ import './PreviewPanel.css';
 
 interface PreviewPanelProps {
   systemIcon: string | null;
-  gradientColors: [string, string];
+  gradientColors: string[]; 
   gameImage: string | null;
   iconSize: number;
   isImageIcon: boolean;
@@ -29,17 +29,15 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
     gradientColors,
     gameImage,
     isImageIcon,
-    size: 1024, // Always render at full size
+    size: 1024,
     artworkZoom
   });
 
-  // Generate gradient CSS from the selected system colors
-  const gradientStyle = `linear-gradient(135deg, ${gradientColors[0]}, ${gradientColors[1]})`;
-  
-  // Create CSS variables for dynamic theming
+  const gradientStyle = `linear-gradient(135deg, ${gradientColors.join(', ')})`;
+
   const themeStyles = {
     '--gradient-start': gradientColors[0],
-    '--gradient-end': gradientColors[1],
+    '--gradient-end': gradientColors[gradientColors.length - 1],
     '--gradient': gradientStyle
   } as React.CSSProperties;
 
@@ -47,8 +45,7 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
     <div className="preview-panel" style={themeStyles}>
       <div className="preview-panel-content">
         <h2 className="preview-panel-title">Preview</h2>
-        
-        {/* Preview Display Area */}
+
         <div className="preview-display-area">
           {imageUrl ? (
             <>
@@ -85,7 +82,6 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
           )}
         </div>
 
-        {/* Controls */}
         <div className="preview-controls">
           <div className="preview-control-group">
             <label className="preview-control-label">
@@ -99,9 +95,9 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
               onChange={(e) => onIconSizeChange(Number(e.target.value))}
               className="preview-slider"
               style={{
-                background: `linear-gradient(to right, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
+                background: `linear-gradient(to right, ${gradientColors.join(', ')})`,
                 '--thumb-color-start': gradientColors[0],
-                '--thumb-color-end': gradientColors[1]
+                '--thumb-color-end': gradientColors[gradientColors.length - 1]
               } as React.CSSProperties}
             />
           </div>
@@ -120,9 +116,9 @@ const PreviewPanel: React.FC<PreviewPanelProps> = ({
                 onChange={(e) => onArtworkZoomChange(Number(e.target.value) / 100)}
                 className="preview-slider"
                 style={{
-                  background: `linear-gradient(to right, ${gradientColors[0]} 0%, ${gradientColors[1]} 100%)`,
+                  background: `linear-gradient(to right, ${gradientColors.join(', ')})`,
                   '--thumb-color-start': gradientColors[0],
-                  '--thumb-color-end': gradientColors[1]
+                  '--thumb-color-end': gradientColors[gradientColors.length - 1]
                 } as React.CSSProperties}
               />
             </div>

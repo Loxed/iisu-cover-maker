@@ -1,82 +1,105 @@
 import React from 'react';
-import { Palette } from 'lucide-react';
-import './GradientControls.css'
+import { Plus, Trash2 } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable, DropResult, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import './GradientControls.css';
 
 interface GradientControlsProps {
-  gradientStart: string;
-  gradientEnd: string;
-  onGradientStartChange: (color: string) => void;
-  onGradientEndChange: (color: string) => void;
+  colors: string[];
+  onColorChange: (index: number, color: string) => void;
+  onAddColor: () => void;
+  onRemoveColor: (index: number) => void;
+  onReorderColors: (from: number, to: number) => void;
 }
 
 const GradientControls: React.FC<GradientControlsProps> = ({
-  gradientStart,
-  gradientEnd,
-  onGradientStartChange,
-  onGradientEndChange
+  colors,
+  onColorChange,
+  onAddColor,
+  onRemoveColor,
+  onReorderColors
 }) => {
+  const handleDragEnd = (result: DropResult) => {
+    const { source, destination } = result;
+    if (!destination || source.index === destination.index) return;
+    onReorderColors(source.index, destination.index);
+  };
+
+  const removeColor = (index: number) => {
+    if (colors.length > 1) onRemoveColor(index);
+  };
+
+  const renderColorRow = (
+    color: string,
+    index: number,
+    provided: DraggableProvided,
+    snapshot: DraggableStateSnapshot
+  ) => (
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      {...provided.dragHandleProps}
+      className={`gradient-color-wrapper ${snapshot.isDragging ? 'dragging' : ''}`}
+      style={{ ...provided.draggableProps.style, zIndex: snapshot.isDragging ? 1000 : undefined }}
+    >
+      <div className="gradient-color-inner">
+        <div className="gradient-drag-handle">≡</div>
+        <input
+          type="color"
+          value={color}
+          onChange={(e) => onColorChange(index, e.target.value)}
+          className="gradient-color-picker"
+        />
+        <input
+          type="text"
+          value={color}
+          onChange={(e) => onColorChange(index, e.target.value)}
+          className="gradient-hex-input"
+        />
+        {colors.length > 1 && (
+          <Trash2
+            size={18}
+            className="gradient-delete-inline"
+            onClick={() => removeColor(index)}
+          />
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div className="gradient-controls">
-      {/* Header */}
-      <div className="gradient-header">
-        <div className="gradient-icon-container">
-          <Palette size={18} className="text-gray-800" />
-        </div>
-        <h3 className="gradient-title">Border Gradient</h3>
-      </div>
-      
-      {/* Start Color */}
-      <div className="gradient-color-section">
-        <label className="gradient-label">Start Color</label>
-        <div className="gradient-input-row">
-          <div className="gradient-color-picker-wrapper">
-            <input
-              type="color"
-              value={gradientStart}
-              onChange={(e) => onGradientStartChange(e.target.value)}
-              className="gradient-color-picker"
-            />
-          </div>
-          <input
-            type="text"
-            value={gradientStart}
-            onChange={(e) => onGradientStartChange(e.target.value)}
-            className="gradient-hex-input"
-            placeholder="#000000"
-          />
-        </div>
-      </div>
+      <h3 className="gradient-title">Border Gradient</h3>
 
-      {/* End Color */}
-      <div className="gradient-color-section">
-        <label className="gradient-label">End Color</label>
-        <div className="gradient-input-row">
-          <div className="gradient-color-picker-wrapper">
-            <input
-              type="color"
-              value={gradientEnd}
-              onChange={(e) => onGradientEndChange(e.target.value)}
-              className="gradient-color-picker"
-            />
-          </div>
-          <input
-            type="text"
-            value={gradientEnd}
-            onChange={(e) => onGradientEndChange(e.target.value)}
-            className="gradient-hex-input"
-            placeholder="#000000"
-          />
-        </div>
-      </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable
+          droppableId="colors"
+          renderClone={(provided, snapshot, rubric) => {
+            const color = colors[rubric.source.index];
+            return renderColorRow(color, rubric.source.index, provided, snapshot);
+          }}
+        >
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              {colors.map((color, i) => (
+                <Draggable key={i} draggableId={`color-${i}`} index={i}>
+                  {(prov, snapshot) => renderColorRow(color, i, prov, snapshot)}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
 
-      {/* Preview */}
+      <button type="button" className="gradient-add-color" onClick={onAddColor}>
+        <Plus size={16} /> Add Color
+      </button>
+
       <div className="gradient-preview-section">
         <label className="gradient-label">Preview</label>
-        <div 
+        <div
           className="gradient-preview"
-          style={{
-            background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`
-          }}
+          style={{ background: `linear-gradient(135deg, ${colors.join(', ')})` }}
         />
       </div>
     </div>

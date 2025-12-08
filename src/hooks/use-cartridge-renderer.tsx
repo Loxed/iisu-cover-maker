@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 
 interface UseCartridgeRendererProps {
   systemIcon: string | null;
-  gradientColors: [string, string];
+  gradientColors: string[];
   gameImage: string | null;
   isImageIcon: boolean;
   size: number;
@@ -19,267 +19,181 @@ export const useCartridgeRenderer = ({
 }: UseCartridgeRendererProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [isRendering, setIsRendering] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const renderTimeoutRef = useRef<number | null>(null);
 
   const renderToCanvas = async () => {
+    setIsRendering(true);
     const canvas = document.createElement('canvas');
-    canvasRef.current = canvas;
+    canvas.width = size;
+    canvas.height = size;
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       setIsRendering(false);
       return;
     }
 
-    const baseReference = 1024;
-    canvas.width = baseReference;
-    canvas.height = baseReference;
-
-    const outerRadius = 80;
     const borderThickness = 25;
+    const innerSize = size - borderThickness * 2;
+    const outerRadius = 80;
     const innerRadius = 55;
     const systemBadgeSize = 180;
     const systemBadgeRadius = 80;
+    const fullGradientSize = 1024; // fixed gradient space
 
-    // Helper function for rounded rectangles
     const roundRect = (
-      ctx: CanvasRenderingContext2D, 
-      x: number, y: number, width: number, height: number, radius: number
+      ctx: CanvasRenderingContext2D,
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      r: number
     ) => {
       ctx.beginPath();
-      ctx.moveTo(x + radius, y);
-      ctx.lineTo(x + width - radius, y);
-      ctx.arcTo(x + width, y, x + width, y + radius, radius);
-      ctx.lineTo(x + width, y + height - radius);
-      ctx.arcTo(x + width, y + height, x + width - radius, y + height, radius);
-      ctx.lineTo(x + radius, y + height);
-      ctx.arcTo(x, y + height, x, y + height - radius, radius);
-      ctx.lineTo(x, y + radius);
-      ctx.arcTo(x, y, x + radius, y, radius);
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.arcTo(x + w, y, x + w, y + r, r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+      ctx.lineTo(x + r, y + h);
+      ctx.arcTo(x, y + h, x, y + h - r, r);
+      ctx.lineTo(x, y + r);
+      ctx.arcTo(x, y, x + r, y, r);
       ctx.closePath();
     };
 
-    // Draw outer border with gradient
-    const gradient = ctx.createLinearGradient(0, 0, baseReference, baseReference);
-    gradient.addColorStop(0, gradientColors[0]);
-    gradient.addColorStop(1, gradientColors[1]);
-    
-    ctx.fillStyle = gradient;
-    roundRect(ctx, 0, 0, baseReference, baseReference, outerRadius);
-    ctx.fill();
-
-    // Draw inner dark background
-    ctx.fillStyle = '#ffffff';
-    roundRect(ctx, borderThickness, borderThickness, 
-              baseReference - borderThickness * 2, baseReference - borderThickness * 2, innerRadius);
-    ctx.fill();
-
-    // Draw placeholder function
-    const drawPlaceholder = () => {
-      const placeholderGradient = ctx.createLinearGradient(
-        borderThickness, borderThickness, 
-        baseReference - borderThickness, baseReference - borderThickness
-      );
-      placeholderGradient.addColorStop(0, '#374151');
-      placeholderGradient.addColorStop(1, '#111827');
-      
-      ctx.save();
-      roundRect(ctx, borderThickness, borderThickness, 
-                baseReference - borderThickness * 2, baseReference - borderThickness * 2, innerRadius);
-      ctx.clip();
-      ctx.fillStyle = placeholderGradient;
-      ctx.fillRect(borderThickness, borderThickness, 
-                   baseReference - borderThickness * 2, baseReference - borderThickness * 2);
-      ctx.restore();
-
-      ctx.fillStyle = '#6b7280';
-      ctx.font = 'bold 40px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('No Artwork', baseReference / 2, baseReference / 2 + 100);
+    // --- Create gradient (supports 1+ colors safely) ---
+    const createGradient = (colors: string[], x0: number, y0: number, x1: number, y1: number) => {
+      const gradient = ctx.createLinearGradient(x0, y0, x1, y1);
+      if (colors.length === 1) {
+        gradient.addColorStop(0, colors[0]);
+        gradient.addColorStop(1, colors[0]);
+      } else {
+        colors.forEach((color, i) => {
+          gradient.addColorStop(i / (colors.length - 1), color);
+        });
+      }
+      return gradient;
     };
 
-    // Draw game image or placeholder
-    const drawGameArt = () => new Promise<void>((resolve) => {
-      if (gameImage) {
+    // --- Border gradient ---
+    const borderGradient = createGradient(gradientColors, 0, 0, fullGradientSize, fullGradientSize);
+    ctx.fillStyle = borderGradient;
+    roundRect(ctx, 0, 0, size, size, outerRadius);
+    ctx.fill();
+
+    // --- Inner white rectangle ---
+    ctx.fillStyle = '#ffffff';
+    roundRect(ctx, borderThickness, borderThickness, innerSize, innerSize, innerRadius);
+    ctx.fill();
+
+    // --- Draw game artwork ---
+    if (gameImage) {
+      await new Promise<void>((resolve) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
+        img.src = gameImage;
         img.onload = () => {
-          ctx.save();
-          roundRect(ctx, borderThickness, borderThickness, 
-                    baseReference - borderThickness * 2, baseReference - borderThickness * 2, innerRadius);
-          ctx.clip();
-          
-          // Container dimensions
-          const containerWidth = baseReference - borderThickness * 2;
-          const containerHeight = baseReference - borderThickness * 2;
-          
-          // Calculate aspect ratio
+          const containerWidth = innerSize;
+          const containerHeight = innerSize;
           const imgAspect = img.width / img.height;
           const containerAspect = containerWidth / containerHeight;
-          
-          // Calculate dimensions to FILL container and preserve aspect ratio (cover behavior)
           let drawWidth, drawHeight;
-          
+
           if (imgAspect > containerAspect) {
-            // Image is wider than container - fit to height (fill vertically)
             drawHeight = containerHeight;
             drawWidth = containerHeight * imgAspect;
           } else {
-            // Image is taller than container - fit to width (fill horizontally)
             drawWidth = containerWidth;
             drawHeight = containerWidth / imgAspect;
           }
-          
-          // Apply zoom
+
           drawWidth *= artworkZoom;
           drawHeight *= artworkZoom;
-          
-          // Center the image
+
           const artworkX = borderThickness + (containerWidth - drawWidth) / 2;
           const artworkY = borderThickness + (containerHeight - drawHeight) / 2;
-          
+
+          ctx.save();
+          roundRect(ctx, borderThickness, borderThickness, innerSize, innerSize, innerRadius);
+          ctx.clip();
           ctx.drawImage(img, artworkX, artworkY, drawWidth, drawHeight);
           ctx.restore();
           resolve();
         };
-        img.onerror = () => {
-          drawPlaceholder();
-          resolve();
-        };
-        img.src = gameImage;
-      } else {
-        drawPlaceholder();
-        resolve();
-      }
-    });
+        img.onerror = () => resolve();
+      });
+    }
 
-    await drawGameArt();
-
-    // Only draw badge if there's a system icon
+    // --- Draw system badge ---
     if (systemIcon) {
-      // Draw badge with gradient that extends across full canvas
       ctx.save();
-      
-      // Clip to badge shape
       ctx.beginPath();
       ctx.moveTo(systemBadgeRadius, 0);
       ctx.lineTo(systemBadgeSize, 0);
       ctx.lineTo(systemBadgeSize, systemBadgeSize - systemBadgeRadius);
-      ctx.arcTo(systemBadgeSize, systemBadgeSize, 
-                systemBadgeSize - systemBadgeRadius, systemBadgeSize, systemBadgeRadius);
+      ctx.arcTo(systemBadgeSize, systemBadgeSize, systemBadgeSize - systemBadgeRadius, systemBadgeSize, systemBadgeRadius);
       ctx.lineTo(0, systemBadgeSize);
       ctx.lineTo(0, systemBadgeRadius);
       ctx.arcTo(0, 0, systemBadgeRadius, 0, systemBadgeRadius);
       ctx.closePath();
       ctx.clip();
-      
-      // Fill with the full canvas gradient (not a separate badge gradient)
-      ctx.fillStyle = gradient;
+
+      const badgeGradient = createGradient(gradientColors, 0, 0, fullGradientSize, fullGradientSize);
+      ctx.fillStyle = badgeGradient;
       ctx.fillRect(0, 0, systemBadgeSize, systemBadgeSize);
-      
       ctx.restore();
 
-      // Draw text icon function
-      const drawTextIcon = () => {
-        if (!systemIcon) return;
-        ctx.fillStyle = 'white';
-        ctx.font = `${systemBadgeSize * 0.45}px Arial`;
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(systemIcon, systemBadgeSize / 2, systemBadgeSize / 2);
-      };
-
-      // Draw icon
+      // Draw system icon (image or emoji)
       await new Promise<void>((resolve) => {
         if (isImageIcon) {
           const iconImg = new Image();
           iconImg.crossOrigin = 'anonymous';
+          iconImg.src = systemIcon;
           iconImg.onload = () => {
-            // Icon takes 50% of badge area from center
             const maxIconSize = systemBadgeSize * 0.5;
             const centerX = systemBadgeSize / 2;
             const centerY = systemBadgeSize / 2;
-            
-            // Calculate dimensions to maintain aspect ratio
             const imgAspect = iconImg.width / iconImg.height;
             let drawWidth = maxIconSize;
             let drawHeight = maxIconSize;
 
-            if (imgAspect > 1) {
-              // Wider than tall
-              drawHeight = maxIconSize / imgAspect;
-            } else {
-              // Taller than wide
-              drawWidth = maxIconSize * imgAspect;
-            }
+            if (imgAspect > 1) drawHeight = maxIconSize / imgAspect;
+            else drawWidth = maxIconSize * imgAspect;
 
-            const iconX = centerX - drawWidth / 2;
-            const iconY = centerY - drawHeight / 2;
-            
-            // Create temporary canvas for white filter
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = drawWidth;
-            tempCanvas.height = drawHeight;
-            const tempCtx = tempCanvas.getContext('2d');
-            
-            if (tempCtx) {
-              // Draw the icon at correct size
-              tempCtx.drawImage(iconImg, 0, 0, drawWidth, drawHeight);
-              
-              // Apply white color overlay
-              tempCtx.globalCompositeOperation = 'source-in';
-              tempCtx.fillStyle = 'white';
-              tempCtx.fillRect(0, 0, drawWidth, drawHeight);
-              
-              // Draw to main canvas at centered position
-              ctx.drawImage(tempCanvas, iconX, iconY);
-            }
+            ctx.drawImage(iconImg, centerX - drawWidth / 2, centerY - drawHeight / 2, drawWidth, drawHeight);
             resolve();
           };
-          iconImg.onerror = () => {
-            drawTextIcon();
-            resolve();
-          };
-          iconImg.src = systemIcon;
+          iconImg.onerror = () => resolve();
         } else {
-          drawTextIcon();
+          ctx.fillStyle = 'white';
+          ctx.font = `${systemBadgeSize * 0.45}px Arial`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(systemIcon, systemBadgeSize / 2, systemBadgeSize / 2);
           resolve();
         }
       });
     }
 
-    // Convert to data URL
-    const dataUrl = canvas.toDataURL('image/png');
-    setImageUrl(dataUrl);
+    setImageUrl(canvas.toDataURL('image/png'));
     setIsRendering(false);
   };
 
   useEffect(() => {
-    // Debounce the render for zoom changes
-    if (renderTimeoutRef.current) {
-      clearTimeout(renderTimeoutRef.current);
-    }
-
+    if (renderTimeoutRef.current) clearTimeout(renderTimeoutRef.current);
     setIsRendering(true);
-    
-    renderTimeoutRef.current = window.setTimeout(() => {
-      renderToCanvas();
-    }, 100);
+    renderTimeoutRef.current = window.setTimeout(() => renderToCanvas(), 100);
 
     return () => {
-      if (renderTimeoutRef.current) {
-        clearTimeout(renderTimeoutRef.current);
-      }
+      if (renderTimeoutRef.current) clearTimeout(renderTimeoutRef.current);
     };
   }, [systemIcon, gradientColors, gameImage, isImageIcon, artworkZoom]);
 
   const downloadImage = () => {
     if (!imageUrl) return;
-    
     const link = document.createElement('a');
-    link.download = 'game-cartridge-icon.png';
     link.href = imageUrl;
+    link.download = 'game-cartridge-icon.png';
     link.click();
   };
 

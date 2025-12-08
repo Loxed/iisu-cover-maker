@@ -1,58 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface GameCartridgeBuilderProps {
   systemIcon: string | null;
-  gradientColors: [string, string];
+  gradientColors: string[];
   gameImage: string | null;
   size: number;
   isImageIcon: boolean;
 }
 
-const GameCartridgeBuilder: React.FC<GameCartridgeBuilderProps> = ({ 
-  systemIcon, 
-  gradientColors, 
-  gameImage, 
+const GameCartridgeBuilder: React.FC<GameCartridgeBuilderProps> = ({
+  systemIcon,
+  gradientColors,
+  gameImage,
   size,
   isImageIcon
 }) => {
   const [iconError, setIconError] = useState(false);
   const [imageError, setImageError] = useState(false);
-  
-  // Reset error state when gameImage changes
-  React.useEffect(() => {
-    setImageError(false);
-  }, [gameImage]);
-  
+
+  useEffect(() => setImageError(false), [gameImage]);
+
   const baseReference = 1024;
   const outerRadius = 80;
   const borderThickness = 25;
   const innerRadius = 55;
   const systemBadgeSize = 180;
   const systemBadgeRadius = 80;
-  
   const scale = size / baseReference;
-  const innerSize = size - (borderThickness * scale * 2);
+  const innerSize = size - borderThickness * scale * 2;
+
+  // Gradient stops for SVG
+  const gradientStops = gradientColors.map((color, index) => (
+    <stop
+      key={index}
+      offset={`${(index / (gradientColors.length - 1)) * 100}%`}
+      stopColor={color}
+    />
+  ));
 
   return (
-    <div 
+    <div
       id="cartridge-builder"
       data-export="true"
-      className="relative" 
-      style={{ 
-        width: size, 
-        height: size 
-      }}
+      className="relative"
+      style={{ width: size, height: size }}
     >
       {/* Border with gradient */}
-      <svg 
-        width={size} 
-        height={size}
-        className="absolute inset-0"
-      >
+      <svg width={size} height={size} className="absolute inset-0">
         <defs>
-          <linearGradient id={`borderGradient-${size}`} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={gradientColors[0]} />
-            <stop offset="100%" stopColor={gradientColors[1]} />
+          <linearGradient
+            id={`borderGradient-${size}`}
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
+            {gradientStops}
           </linearGradient>
         </defs>
         <rect
@@ -65,8 +68,8 @@ const GameCartridgeBuilder: React.FC<GameCartridgeBuilderProps> = ({
         />
       </svg>
 
-      {/* Inner content background */}
-      <div 
+      {/* Inner content */}
+      <div
         className="absolute flex items-center justify-center"
         style={{
           top: borderThickness * scale,
@@ -78,45 +81,43 @@ const GameCartridgeBuilder: React.FC<GameCartridgeBuilderProps> = ({
           overflow: 'hidden'
         }}
       >
-
-          <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex flex-col items-center justify-center gap-4 text-gray-500">
-            <svg 
-              width={size * 0.25} 
-              height={size * 0.25} 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="1.5"
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            >
-              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              <circle cx="9" cy="11" r="1"></circle>
-              <circle cx="15" cy="11" r="1"></circle>
-              <path d="M9 15h6"></path>
-            </svg>
-            <span style={{ fontSize: size * 0.04 }} className="font-medium">
-              No Artwork
-            </span>
-          </div>
-        )}
+        <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-gray-500">
+          <svg
+            width={size * 0.25}
+            height={size * 0.25}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+            <circle cx="9" cy="11" r="1" />
+            <circle cx="15" cy="11" r="1" />
+            <path d="M9 15h6" />
+          </svg>
+          <span style={{ fontSize: size * 0.04 }} className="font-medium">
+            No Artwork
+          </span>
+        </div>
       </div>
 
-      {/* System badge (top-left) */}
+      {/* System badge */}
       {systemIcon && (
         <div
           className="absolute top-0 left-0 flex items-center justify-center text-white"
           style={{
             width: systemBadgeSize * scale,
             height: systemBadgeSize * scale,
-            background: `linear-gradient(135deg, ${gradientColors[0]}, ${gradientColors[1]})`,
+            background: `linear-gradient(135deg, ${gradientColors.join(', ')})`,
             borderTopLeftRadius: systemBadgeRadius * scale,
-            borderBottomRightRadius: systemBadgeRadius * scale,
+            borderBottomRightRadius: systemBadgeRadius * scale
           }}
         >
           {isImageIcon && !iconError ? (
-            <img 
+            <img
               src={systemIcon}
               alt="System icon"
               style={{

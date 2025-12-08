@@ -7,11 +7,11 @@ export const loadSystemPresets = async (): Promise<SystemPreset[]> => {
     const gradients: SystemGradients = await response.json();
 
     const presets: SystemPreset[] = Object.keys(gradients).map(key => ({
-        name: SYSTEM_NAMES[key] || key.toUpperCase(),
-        key,
-        gradient: gradients[key],
-        iconPath: `/systems/icons/${key}.png`,
-        artworkPath: `/systems/artwork/${key}.png`  // Always include the path
+      name: SYSTEM_NAMES[key] || key.toUpperCase(),
+      key,
+      gradient: Array.isArray(gradients[key]) ? gradients[key] : [],
+      iconPath: `/systems/icons/${key}.png`,
+      artworkPath: `/systems/artwork/${key}.png`
     }));
 
     presets.sort((a, b) => a.name.localeCompare(b.name));
@@ -27,12 +27,14 @@ export const loadSystemPresets = async (): Promise<SystemPreset[]> => {
     return presets;
   } catch (error) {
     console.error('Failed to load system presets:', error);
-    return [{
-      name: 'Custom',
-      key: 'custom',
-      gradient: ['#9333ea', '#06b6d4'],
-      iconPath: '',
-      artworkPath: ''
-    }];
+    return [
+      {
+        name: 'Custom',
+        key: 'custom',
+        gradient: ['#9333ea', '#06b6d4'],
+        iconPath: '',
+        artworkPath: ''
+      }
+    ];
   }
 };

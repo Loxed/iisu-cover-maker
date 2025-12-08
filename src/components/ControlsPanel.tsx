@@ -10,17 +10,21 @@ interface ControlsPanelProps {
   presets: SystemPreset[];
   selectedPresetKey: string;
   customIcon: string;
-  gradientStart: string;
-  gradientEnd: string;
+  colors: string[];
   gameImage: string | null;
   isImageIcon: boolean;
   presetsLoading: boolean;
+
   onPresetChange: (preset: SystemPreset) => void;
   onIconChange: (icon: string) => void;
   onImageIconUpload: (imagePath: string) => void;
   onClearImageIcon: () => void;
-  onGradientStartChange: (color: string) => void;
-  onGradientEndChange: (color: string) => void;
+
+  onColorChange: (index: number, color: string) => void;
+  onAddColor: () => void;
+  onRemoveColor: (index: number) => void;
+  onReorderColors: (fromIndex: number, toIndex: number) => void;
+
   onImageUpload: (image: string) => void;
   onImageRemove: () => void;
 }
@@ -29,25 +33,25 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
   presets,
   selectedPresetKey,
   customIcon,
-  gradientStart,
-  gradientEnd,
+  colors,
   gameImage,
   isImageIcon,
   presetsLoading,
+
   onPresetChange,
   onIconChange,
   onImageIconUpload,
   onClearImageIcon,
-  onGradientStartChange,
-  onGradientEndChange,
+
+  onColorChange,
+  onAddColor,
+  onRemoveColor,
+  onReorderColors,
+
   onImageUpload,
   onImageRemove
 }) => {
-  // Create CSS variables for dynamic theming
-  const themeStyles = {
-    '--gradient-start': gradientStart,
-    '--gradient-end': gradientEnd
-  } as React.CSSProperties;
+  const themeStyles = { '--gradient-start': colors[0], '--gradient-end': colors[colors.length - 1] } as React.CSSProperties;
 
   return (
     <div className="controls-panel" style={themeStyles}>
@@ -55,7 +59,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         <h2 className="controls-panel-title">Customize</h2>
 
         <div className="controls-section">
-          <PresetSelector 
+          <PresetSelector
             presets={presets}
             selectedPresetKey={selectedPresetKey}
             onPresetChange={onPresetChange}
@@ -64,7 +68,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
         </div>
 
         <div className="controls-section">
-          <IconInput 
+          <IconInput
             value={customIcon}
             onChange={onIconChange}
             isImageIcon={isImageIcon}
@@ -75,10 +79,11 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
         <div className="controls-section">
           <GradientControls
-            gradientStart={gradientStart}
-            gradientEnd={gradientEnd}
-            onGradientStartChange={onGradientStartChange}
-            onGradientEndChange={onGradientEndChange}
+            colors={colors}
+            onColorChange={onColorChange}
+            onAddColor={onAddColor}
+            onRemoveColor={onRemoveColor}
+            onReorderColors={onReorderColors}
           />
         </div>
 
