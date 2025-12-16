@@ -3,7 +3,7 @@ import { SYSTEM_NAMES } from '../data/systemNames';
 
 export const loadSystemPresets = async (): Promise<SystemPreset[]> => {
   try {
-    const response = await fetch('/systems/colors/system_gradients.json');
+    const response = await fetch('/systems/colors/system_gradients_default.json');
     const gradients: SystemGradients = await response.json();
 
     const presets: SystemPreset[] = Object.keys(gradients).map(key => ({
